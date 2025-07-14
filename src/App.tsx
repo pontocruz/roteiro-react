@@ -1,5 +1,5 @@
 //FILE: App.tsx
-
+import { CreateInstructionForm } from './components/CreateInstructionForm'; // Will create this next
 import {useState, useEffect} from 'react';
 import type {Instrucao} from './types/models';
 import './App.css';
@@ -12,7 +12,15 @@ function App() {
     const [error, setError] = useState('');
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [personagens, setPersonagens] = useState<{ id: number, nome: string }[]>([]);
-
+    const [showForm, setShowForm] = useState(false);
+    const fetchInstrucoes = async () => {
+        try {
+            const response = await axios.get('https://localhost:7263/Roteiros/GetInstrucoesJson/1');
+            setInstrucoes(response.data);
+        } catch (err) {
+            setError('Failed to refresh data');
+        }
+    };
     const handleMentionClick = (personagemId: number) => {
         alert(`Personagem ${personagemId} clicked!`); // Temporary
         // Later: Add your logic (filter, highlight, etc.)
@@ -36,6 +44,7 @@ function App() {
             }
         };
         fetchData();
+        fetchInstrucoes();
 
         const fetchPersonagens = async () => {
             try {
@@ -56,37 +65,36 @@ function App() {
 
     return (
         <div className="app-container">
-            {/* ▼ ADD THIS BUTTON/CONTAINER ▼ */}
-            {showCreateForm ? (
+            {/* Anti-forgery token (matches your .NET setup) */}
+            <input
+                type="hidden"
+                name="__RequestVerificationToken"
+                value={document.querySelector('input[name="__RequestVerificationToken"]')?.value}
+            />
+
+            {showForm ? (
                 <CreateInstructionForm
-                    cenaId={1}
+                    cenaId={1} // Pass your actual cenaId
                     personagens={personagens}
                     onCreateSuccess={() => {
-                        setShowCreateForm(false);
-                        // TODO: Refresh instructions list
+                        setShowForm(false);
+                        // Refresh instructions
+                        fetchInstrucoes();
                     }}
                 />
             ) : (
                 <button
-                    onClick={() => setShowCreateForm(true)}
+                    onClick={() => setShowForm(true)}
                     className="create-button"
                 >
                     Criar nova instrução
                 </button>
             )}
-            {/* ▲ FORM TOGGLE ABOVE ▲ */}
 
             <div className="tabela">
-                {instrucoes.length > 0 ? (
-                    instrucoes.map(instrucao => (
-                        <InstructionRow
-                            instrucao={instrucao}
-                            onMentionClick={handleMentionClick}
-                        />
-                    ))
-                ) : (
-                    <div>No instructions found</div>
-                )}
+                {instrucoes.map(instrucao => (
+                    <InstructionRow key={instrucao.id} instrucao={instrucao} />
+                ))}
             </div>
         </div>
     );

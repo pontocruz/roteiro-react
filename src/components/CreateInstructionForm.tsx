@@ -20,31 +20,43 @@ export function CreateInstructionForm({ cenaId, personagens, onCreateSuccess }: 
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post('/Roteiros/CreateInstrucao', {
-                CenaId: cenaId,
-                TipoDeInstrucao: tipo,
-                Texto: texto,
-                personagemIds: personagemIds.filter(id => id > 0)
-            }, {
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            const formData = new FormData();
+            formData.append('CenaId', cenaId.toString());
+            formData.append('TipoDeInstrucao', tipo);
+            formData.append('Texto', texto);
+            personagemIds.forEach(id => formData.append('personagemIds', id.toString()));
+
+            const response = await axios.post(
+                'https://localhost:7263/Roteiros/CreateInstrucao',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    }
                 }
-            });
+            );
 
             if (response.data.success) {
                 onCreateSuccess();
-                setTexto('');
-                setPersonagemIds([0]);
+                resetForm();
             } else {
-                setError(response.data.error || 'Failed to create instruction');
+                setError(response.data.error || 'Erro desconhecido');
             }
         } catch (err) {
-            setError('Network error');
+            setError('Erro de rede');
             console.error(err);
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const resetForm = () => {
+        setTexto('');
+        setTipo('Dialogo');
+        setPersonagemIds([0]);
+    };
+
 
     return (
         <form onSubmit={handleSubmit} className="instruction-form">
@@ -111,8 +123,18 @@ export function CreateInstructionForm({ cenaId, personagens, onCreateSuccess }: 
 
             {error && <div className="error">{error}</div>}
 
-            <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Criando...' : 'Criar Instrução'}
+            <button
+                type="submit"
+                disabled={isSubmitting}
+                className={isSubmitting ? 'submitting' : ''}
+            >
+                {isSubmitting ? (
+                    <>
+                        <span className="spinner"></span> Criando...
+                    </>
+                ) : (
+                    'Criar Instrução'
+                )}
             </button>
         </form>
     );

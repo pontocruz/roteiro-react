@@ -15,10 +15,13 @@ function App() {
     const [showForm, setShowForm] = useState(false);
     const fetchInstrucoes = async () => {
         try {
+            setLoading(true);  // ◀️ ADD THIS
             const response = await axios.get('https://localhost:7263/Roteiros/GetInstrucoesJson/1');
             setInstrucoes(response.data);
         } catch (err) {
             setError('Failed to refresh data');
+        } finally {
+            setLoading(false); // ◀️ ADD THIS
         }
     };
     const handleMentionClick = (personagemId: number) => {

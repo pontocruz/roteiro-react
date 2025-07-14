@@ -1,0 +1,83 @@
+/* Base table styles (matches your jQuery structure) */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+
+}
+
+.instrucao-row {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+.ordem {
+  width: 100px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.texto {
+  flex: 1;
+  padding: 0 10px;
+}
+
+/* Personagem buttons */
+.personagem-btn {
+  background: #666666;
+  border: 1px solid #ffff00;
+  border-radius: 3px;
+  padding: 2px 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+/* Minimal reset */
+body {
+  margin: 0;
+  padding: 20px;
+}
+
+.mention-btn {
+  background: #666666;
+  border: 1px solid #ff00ff;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+.mention-btn:hover {
+  background: #bbdefb;
+}
+.mention-btn {
+  /* ... existing styles ... */
+  transition: background 0.2s;
+}
+
+.mention-btn.highlighted {
+  background: #ffeb3b;
+  border-color: #ffc107;
+  font-weight: bold;
+}
+.instruction-form {
+  padding: 20px;
+  border: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.personagem-select-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.error {
+  color: red;
+  margin: 10px 0;
+}
